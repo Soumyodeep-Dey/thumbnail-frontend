@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 
@@ -84,17 +84,22 @@ export default function Home() {
       );
 
       setThumbnails(res.data.thumbnails);
-    } catch (err: any) {
+    } catch (err) {
       console.error("Error generating thumbnails:", err);
-      
+
       // Extract error message from response
       let errorMessage = "Error generating thumbnails!";
-      if (err?.response?.data?.message) {
-        errorMessage = err.response.data.message;
-      } else if (err?.message) {
+      if (axios.isAxiosError(err)) {
+        const axiosError = err as AxiosError<{ message?: string }>;
+        if (axiosError.response?.data?.message) {
+          errorMessage = axiosError.response.data.message;
+        } else if (axiosError.message) {
+          errorMessage = axiosError.message;
+        }
+      } else if (err instanceof Error) {
         errorMessage = err.message;
       }
-      
+
       // Show user-friendly error message
       alert(errorMessage);
     } finally {
