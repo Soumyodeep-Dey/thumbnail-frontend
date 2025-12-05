@@ -84,9 +84,19 @@ export default function Home() {
       );
 
       setThumbnails(res.data.thumbnails);
-    } catch (err) {
-      console.error(err);
-      alert("Error generating thumbnails!");
+    } catch (err: any) {
+      console.error("Error generating thumbnails:", err);
+      
+      // Extract error message from response
+      let errorMessage = "Error generating thumbnails!";
+      if (err?.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err?.message) {
+        errorMessage = err.message;
+      }
+      
+      // Show user-friendly error message
+      alert(errorMessage);
     } finally {
       setLoading(false);
     }
