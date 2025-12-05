@@ -45,13 +45,34 @@ export default function Home() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!file) return alert("Please upload a photo!");
+
+    // Validate all required fields
+    if (!file) {
+      alert("Please upload a photo!");
+      return;
+    }
+    if (!videoType?.trim()) {
+      alert("Please enter a video type!");
+      return;
+    }
+    if (!style?.trim()) {
+      alert("Please enter a style!");
+      return;
+    }
+    if (!mood?.trim()) {
+      alert("Please enter a mood!");
+      return;
+    }
+    if (!placement) {
+      alert("Please select a placement!");
+      return;
+    }
 
     const formData = new FormData();
     formData.append("photo", file);
-    formData.append("videoType", videoType);
-    formData.append("style", style);
-    formData.append("mood", mood);
+    formData.append("videoType", videoType.trim());
+    formData.append("style", style.trim());
+    formData.append("mood", mood.trim());
     formData.append("placement", placement);
 
     try {
@@ -131,6 +152,7 @@ export default function Home() {
             <input
               type="file"
               accept="image/*"
+              required
               onChange={(e) => setFile(e.target.files?.[0] || null)}
               className="w-full border-2 border-gray-200 p-3 rounded-xl file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition-all cursor-pointer"
             />
@@ -146,6 +168,7 @@ export default function Home() {
                 placeholder="e.g., Gaming, Vlog, Tutorial"
                 value={videoType}
                 onChange={(e) => setVideoType(e.target.value)}
+                required
                 className="w-full border-2 border-gray-200 p-3 rounded-xl input-focus outline-none"
               />
             </div>
@@ -159,6 +182,7 @@ export default function Home() {
                 placeholder="e.g., Flashy, Minimal, Professional"
                 value={style}
                 onChange={(e) => setStyle(e.target.value)}
+                required
                 className="w-full border-2 border-gray-200 p-3 rounded-xl input-focus outline-none"
               />
             </div>
@@ -172,6 +196,7 @@ export default function Home() {
                 placeholder="e.g., Exciting, Funny, Serious"
                 value={mood}
                 onChange={(e) => setMood(e.target.value)}
+                required
                 className="w-full border-2 border-gray-200 p-3 rounded-xl input-focus outline-none"
               />
             </div>
@@ -183,6 +208,7 @@ export default function Home() {
               <select
                 value={placement}
                 onChange={(e) => setPlacement(e.target.value)}
+                required
                 className="w-full border-2 border-gray-200 p-3 rounded-xl input-focus outline-none cursor-pointer bg-white"
               >
                 <option value="left">⬅️ Left</option>
