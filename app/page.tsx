@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import axios from "axios";
 import JSZip from "jszip";
@@ -8,6 +8,15 @@ import { saveAs } from "file-saver";
 
 interface ThumbnailResponse {
   thumbnails: string[]; // URLs or base64 strings
+}
+
+interface Particle {
+  id: number;
+  size: number;
+  left: number;
+  top: number;
+  duration: number;
+  delay: number;
 }
 
 export default function Home() {
@@ -18,17 +27,20 @@ export default function Home() {
   const [placement, setPlacement] = useState("center");
   const [thumbnails, setThumbnails] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
+  const [particles, setParticles] = useState<Particle[]>([]);
 
-  // Generate particle properties once to avoid hydration mismatch
-  const particles = useMemo(() => {
-    return Array.from({ length: 20 }, (_, i) => ({
-      id: i,
-      size: Math.random() * 10 + 5,
-      left: Math.random() * 100,
-      top: Math.random() * 100,
-      duration: Math.random() * 10 + 10,
-      delay: Math.random() * 5,
-    }));
+  // Generate particle properties only on client side to avoid hydration mismatch
+  useEffect(() => {
+    setParticles(
+      Array.from({ length: 20 }, (_, i) => ({
+        id: i,
+        size: Math.random() * 10 + 5,
+        left: Math.random() * 100,
+        top: Math.random() * 100,
+        duration: Math.random() * 10 + 10,
+        delay: Math.random() * 5,
+      }))
+    );
   }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
